@@ -7,12 +7,9 @@ import admin.pages.MainPage;
 import admin.pages.ShopPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
@@ -86,10 +83,13 @@ public class TestRunner {
     public void checkProductView() throws InterruptedException {
         driver.get("http://prestashop-automation.qatestlab.com.ua/ru/");
         shopPage = new ShopPage(driver);
-        shopPage.searchProduct(productName);
-        shopPage.checkProductDetails(productName);
+        shopPage.openAllProducts().checkNewProductPresent(productName);
+
+        shopPage.openProductDetails(productName);
+        shopPage.getProductDetails();
         Assert.assertEquals(shopPage.getProductName(), this.productName);
         Assert.assertEquals(shopPage.getProductPrice(), this.productPrice);
+        Assert.assertEquals(shopPage.getProductCount(), this.productCount);
     }
 
     @AfterClass

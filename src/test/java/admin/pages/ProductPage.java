@@ -1,13 +1,10 @@
 package admin.pages;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import org.testng.Assert;
 
 public class ProductPage {
 
@@ -17,9 +14,8 @@ public class ProductPage {
     By productPriceInput = By.id("form_step1_price_shortcut");
     By activateProduct = By.cssSelector(".switch-input");
     By settingsPopup = By.id("growls");
+    By popupMessage = By.className("growl-message");
     By closeSettingsPopup = By.cssSelector(".growl-close");
-
-
 
     private final WebDriver driver;
 
@@ -35,16 +31,19 @@ public class ProductPage {
         driver.findElement(productPriceInput).clear();
         driver.findElement(productPriceInput).sendKeys(price);
         driver.findElement(activateProduct).click();
-        waitPopupAndCloseIt();
+        checkSaveSettings();
         driver.findElement(productNameInput).submit();
-        waitPopupAndCloseIt();
+        checkSaveSettings();
     }
 
-    public void waitPopupAndCloseIt() {
-        new WebDriverWait(driver,15)
+    public void checkSaveSettings() {
+        new WebDriverWait(driver,10)
                 .withMessage("Произошла ошибка при сохранении настроек!!!")
                 .until(ExpectedConditions.visibilityOfElementLocated(settingsPopup));
-        driver.findElement(closeSettingsPopup).click();
+        String message = driver.findElement(popupMessage).getAttribute("innerHTML");
+        Assert.assertEquals(message, "Настройки обновлены.");
+        if(driver.findElement(settingsPopup).isDisplayed()){
+            driver.findElement(closeSettingsPopup).click();
+        }
     }
-
 }
